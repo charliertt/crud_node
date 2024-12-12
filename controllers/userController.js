@@ -20,7 +20,20 @@ exports.search = async (req, res) => {
         const users = await User.find({
             name: new RegExp(query, 'i')  // Busca coincidencias en el nombre (insensible a mayúsculas y minúsculas)
         });
-        res.render('index', { users });
+
+        // Si no hay coincidencias, se agrega un mensaje
+        if (users.length === 0) {
+            return res.render('index', { 
+                users: [], 
+                message: 'No se encontraron usuarios que coincidan con la búsqueda.' 
+            });
+        }
+
+        // Si hay coincidencias, se renderiza la página con los usuarios
+        res.render('index', { 
+            users,
+            message: '' // Pasamos un mensaje vacío si hay usuarios encontrados
+        });
     } catch (error) {
         res.status(500).send(error);
     }
