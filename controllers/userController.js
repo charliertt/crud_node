@@ -2,23 +2,25 @@ const User = require('../models/user');
 
 // Mostrar todos los usuarios index
 exports.index = async (req, res) => {
-    try{
+    try {
         const users = await User.find();
-        res.render('index', {users});
-
-    }catch(error){
+        res.render('index', { 
+            users, 
+            message: ''  // Aseguramos que 'message' siempre esté definida
+        });
+    } catch (error) {
         res.status(500).send(error);
     }
 };
 
 
 exports.search = async (req, res) => {
-    const { query } = req.query;  // Se obtiene la consulta de búsqueda desde los parámetros de la URL
+    const { query } = req.query;  // Obtener el parámetro de búsqueda desde la URL
 
     try {
         // Filtrar los usuarios que coincidan con el nombre
         const users = await User.find({
-            name: new RegExp(query, 'i')  // Busca coincidencias en el nombre (insensible a mayúsculas y minúsculas)
+            name: new RegExp(query, 'i')  // Busca de manera insensible a mayúsculas y minúsculas
         });
 
         // Si no hay coincidencias, se agrega un mensaje
@@ -31,8 +33,8 @@ exports.search = async (req, res) => {
 
         // Si hay coincidencias, se renderiza la página con los usuarios
         res.render('index', { 
-            users,
-            message: '' // Pasamos un mensaje vacío si hay usuarios encontrados
+            users, 
+            message: ''  // Pasamos un mensaje vacío si hay usuarios encontrados
         });
     } catch (error) {
         res.status(500).send(error);

@@ -18,12 +18,12 @@
                 <button type="submit" class="btn btn-primary">Buscar</button>
             </form>
 
-            <!-- Mostrar el mensaje de alerta si existe -->
-            <% if (message && message.length > 0) { %>
-                <div class="alert alert-warning mt-3" role="alert">
-                    <%= message %>
-                </div>
-            <% } %>
+<!-- Mostrar el mensaje de alerta si existe -->
+<% if (typeof message !== 'undefined' && message && message.length > 0) { %>
+    <div class="alert alert-warning mt-3" role="alert">
+        <%= message %>
+    </div>
+<% } %>
 
             <!-- Lista de Usuarios -->
             <% if (users.length > 0) { %>
