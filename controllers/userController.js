@@ -4,9 +4,13 @@ const User = require('../models/user');
 exports.index = async (req, res) => {
     try {
         const users = await User.find();
+
+        // Capturar el mensaje desde el query string si está presente
+        const message = req.query.message || '';  // Recuperar el mensaje desde los parámetros de la URL
+
         res.render('index', { 
             users, 
-            message: ''  // Aseguramos que 'message' siempre esté definida
+            message  // Enviar el mensaje a la vista si existe
         });
     } catch (error) {
         res.status(500).send(error);
@@ -53,12 +57,15 @@ exports.create = async (req, res) => {
 
 
 exports.store = async (req, res) => {
-    const {name, email, age} = req.body;
-    try{
-        const newUser = new User({ name, email, age });
+    const { name, email, age } = req.body;
+    const img = req.file ? `/uploads/${req.file.filename}` : null;  // Ruta de la imagen
+    
+    try {
+        const newUser = new User({ name, email, age, img });
+        
         await newUser.save();
-        res.redirect('/');
-    }catch (error){
+        res.redirect('/?message=Usuario creado con éxito');
+    } catch (error) {
         res.status(500).send(error);
     }
 };
@@ -77,22 +84,26 @@ exports.edit = async (req, res) =>{
 };
 
 // Cuando el usuario le da al boton de guardar para que modifique los datos en la BD
-exports.update = async (req, res) =>{
-    const  {name, email, age} = req.body;
-    try{
-        await User.findByIdAndUpdate(req.params.id,{name, email, age});
-        res.redirect('/');
-    }catch(error){
+exports.update = async (req, res) => {
+    const { name, email, age } = req.body;
+    const img = req.file ? `/uploads/${req.file.filename}` : null;  // Ruta de la imagen, si se ha subido una
+
+    try {
+        const updatedData = { name, email, age };
+        if (img) updatedData.img = img;  // Solo actualizamos la imagen si se subió una nueva
+
+        await User.findByIdAndUpdate(req.params.id, updatedData);
+        res.redirect('/?message=Usuario actualizado correctamente');
+    } catch (error) {
         res.status(500).send(error);
     }
 };
-
 // Eliminar un usuario
 exports.delete = async (req, res) =>{
     console.log(req.params.id)
     try{
         await User.findByIdAndDelete(req.params.id);        
-        res.redirect('/');
+        res.redirect('/?message=Usuario eliminado correctamente');
     }catch(error){
         res.status(500).send(error);
     }

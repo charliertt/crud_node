@@ -14,6 +14,10 @@ const userSchema = new mongoose.Schema({
     age: {
         type: Number,
         required: true
+    },
+    img: {
+        type: String,
+        required: false
     }
 });
 
